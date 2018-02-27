@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Sheng Li Telecom</title>
+    <link rel="stylesheet" href="node_modules\bootstrap\dist\css\bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+  <nav class="navbar-default">
+     <div class="container-fluid">ig 
+       <div class="navbar-header">
+         <img src="images/icons/png/logo.png" id="logo" alt="">
+       </div>
+       <center>
+           <h2 style="font-weight: bold; font-size: 37px;">Sheng Li Telecom</h2>
+       </center>
+     </div>
+   </nav>
+   <div class="container-fluid">
+     <div class="row">
+       <div class="col-md-8 col-sm-7 col-xs-7">
+        <div class="panel panel-default" id="panel">
+          <div class="panel-body">
+            <video id="videoClip" width="100%" autoplay controls>
+              <source id="videoSrc" src="" type="video/WebM">
+            </video>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body" id="description" style="color: #3D0C02;"></div>
+        </div>
+       </div>
+       <div class="col-md-4 col-sm-5 col-xs-5">
+        <div class="list-group">
+          <div id="scrollList" class="scrollbar scrollbar-warning">
+              <div id="videoList" class="force-overflow">
+                
+              </div>
+          </div>
+        </div>
+        <div id="try"></div>
+       </div>
+     </div>
+   </div>  
+  </body>
+  <script>
+    require('./renderer.js')
+  </script>
+  <script type="text/javascript">
+    var mysql      = require('mysql');
+    var connection = mysql.createConnection({
+      host     : 'localhost',
+      user     : 'root',
+      password : null,
+      database : 'sheng_li_video_blog'
+    });
+    
+    connection.connect();
+    var description = [];
+    connection.query('SELECT * FROM videos', function (error, results, fields) {
+      if (error) throw error;
+      console.log(results);
+     $(document).ready(function(){
+      var list = document.getElementById('videoList');
+      for (var i = 0; i < results.length; i++) {
+        console.log(results[i].name);
+        list.innerHTML += '<button id='+i+' onclick="changeSrc()" value='+ results[i].url+' class="list-group-item" style="color: #3D0C02;">'+ results[i].name +'</button>';
+        description[i] = results[i].description;
+      }
+     });
+    });
+
+    function changeSrc(){
+      $("button").click(function(){
+          console.log(this.id);
+          var id = this.id;
+          var value = 'videos/'+document.getElementById(id).value;
+          var videoContainer = document.getElementById('videoClip');
+          var videoSource = document.getElementById('videoSrc');
+          videoSource.setAttribute('src', value);
+          videoContainer.load();
+          //videoContainer.play();
+          var desc = document.getElementById('description');
+          desc.innerHTML = description[id];
+          $('.active').removeClass('active');
+          $('#'+id).addClass('active');
+
+      });
+    }
+  </script>
+  <script type="text/javascript">
+
+  </script>
+</html>
